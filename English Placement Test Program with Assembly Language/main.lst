@@ -1,0 +1,660 @@
+     1                                 %line 1+1 main.asm
+     2                                 
+     3                                 
+     4                                 
+     5                                 
+     6                                 %line 1+1 printNum.asm
+     7                                 
+     8                                 
+     9                                 
+    10                                 
+    11                                 
+    12                                 %line 8+1 printNum.asm
+    13                                 
+    14                                 _printNumStrLen equ 255
+    15                                 
+    16                                 [section .data]
+    17                                 
+    18 00000000 0A000000                _printNumSepuluh dd 10
+    19                                 
+    20                                 
+    21 00000004 01000000                _printNumNegative dd 1
+    22                                 
+    23                                 [section .bss]
+    24                                 
+    25 00000000 <gap>                   _printNumStr resb _printNumStrLen
+    26                                 
+    27                                 [section .text]
+    28                                 
+    29                                 printNum:
+    30                                 
+    31                                 
+    32 00000000 B9FF000000              mov ecx, _printNumStrLen
+    33 00000005 83E901                  sub ecx, 1
+    34                                 
+    35 00000008 C705[00000000]0100-     mov dword [_printNumNegative], 1
+    36 00000008 0000               
+    37                                 
+    38                                 
+    39 00000012 83F800                  cmp eax, 0
+    40 00000015 750A                    jne _printNumCekNegative
+    41                                 
+    42                                 
+    43 00000017 C681[00000000]30        mov byte [_printNumStr + ecx], '0'
+    44 0000001E 83E901                  sub ecx, 1
+    45 00000021 EB37                    jmp _printNumCetak
+    46                                 
+    47                                 _printNumCekNegative:
+    48                                 
+    49 00000023 83F800                  cmp eax, 0
+    50 00000026 7F16                    jg _printNumLoop
+    51                                 
+    52                                 
+    53 00000028 C705[00000000]FFFF-     mov dword [_printNumNegative], -1
+    54 00000028 FFFF               
+    55 00000032 BA00000000              mov edx, 0
+    56 00000037 89C0                    mov eax, eax
+    57 00000039 99                      cdq
+    58 0000003A F72D[00000000]          imul dword [_printNumNegative]
+    59                                 
+    60                                 
+    61                                 _printNumLoop:
+    62                                 
+    63                                 
+    64 00000040 BA00000000              mov edx, 0
+    65 00000045 F735[00000000]          div dword [_printNumSepuluh]
+    66                                 
+    67                                 
+    68 0000004B 80C230                  add dl, '0'
+    69 0000004E 8891[00000000]          mov byte [_printNumStr + ecx], dl
+    70                                 
+    71 00000054 83E901                  sub ecx, 1
+    72                                 
+    73 00000057 83F800                  cmp eax, 0
+    74 0000005A 75E2                    jne _printNumLoop
+    75                                 
+    76                                 
+    77                                 _printNumCetak:
+    78                                 
+    79                                 
+    80 0000005C 833D[00000000]FF        cmp dword [_printNumNegative], -1
+    81 00000063 7508                    jne _printNumCetakNext
+    82                                 
+    83                                 
+    84 00000065 C681[00000000]2D        mov byte [_printNumStr + ecx], '-'
+    85 0000006C 83E901                  sub ecx, 1
+    86                                 
+    87                                 
+    88                                 _printNumCetakNext:
+    89                                 
+    90                                 
+    91 0000006F BAFF000000              mov edx, _printNumStrLen
+    92 00000074 29CA                    sub edx, ecx
+    93 00000076 83EA01                  sub edx, 1
+    94                                 
+    95                                 
+    96 00000079 81C1[00000000]          add ecx, _printNumStr
+    97 0000007F 83C101                  add ecx, 1
+    98                                 
+    99                                 
+   100 00000082 B804000000              mov eax, 4
+   101 00000087 BB01000000              mov ebx, 1
+   102 0000008C CD80                    int 0x80
+   103                                 
+   104                                 _printNumExit:
+   105                                 
+   106 0000008E C3                      ret
+   107                                 
+   108                                 
+   109                                 %line 1+1 scanNum.asm
+   110                                 
+   111                                 
+   112                                 
+   113                                 
+   114                                 
+   115                                 %line 8+1 scanNum.asm
+   116                                 
+   117                                 [section .data]
+   118                                 
+   119 00000008 0A000000                _scanNumSepuluh dd 10
+   120                                 
+   121                                 [section .bss]
+   122 000000FF <gap>                   _scanNumStr resb 1
+   123                                 
+   124                                 
+   125 00000100 <gap>                   _scanNumResult resd 1
+   126                                 
+   127                                 
+   128 00000104 <gap>                   _scanNumNegative resd 1
+   129                                 
+   130                                 [section .text]
+   131                                 
+   132                                 
+   133                                 _scanNumRead:
+   134                                 
+   135                                 
+   136 0000008F B803000000              mov eax, 3
+   137 00000094 BB00000000              mov ebx, 0
+   138 00000099 B9[00000000]            mov ecx, _scanNumStr
+   139 0000009E BA01000000              mov edx, 1
+   140 000000A3 CD80                    int 0x80
+   141                                 
+   142 000000A5 C3                      ret
+   143                                 
+   144                                 
+   145                                 scanNum:
+   146                                 
+   147                                 
+   148 000000A6 C705[00000000]0000-     mov dword [_scanNumResult], 0
+   149 000000A6 0000               
+   150 000000B0 C705[00000000]0100-     mov dword [_scanNumNegative], 1
+   151 000000B0 0000               
+   152                                 
+   153 000000BA E8CBFFFFFF              call _scanNumRead
+   154                                 
+   155                                 
+   156 000000BF 803D[00000000]2D        cmp byte[_scanNumStr], '-'
+   157 000000C6 750A                    jne _scanNumLoop
+   158                                 
+   159                                 
+   160 000000C8 C705[00000000]FFFF-     mov dword [_scanNumNegative], -1
+   161 000000C8 FFFF               
+   162 000000D2 EB2D                    jmp _scanNumNegativeNext
+   163                                 
+   164                                 
+   165                                 _scanNumLoop:
+   166                                 
+   167                                 
+   168 000000D4 BB00000000              mov ebx, 0
+   169 000000D9 8A1D[00000000]          mov bl, byte[_scanNumStr]
+   170                                 
+   171                                 
+   172 000000DF 80FB30                  cmp bl, '0'
+   173 000000E2 7C24                    jl _scanNumExit
+   174 000000E4 80FB39                  cmp bl, '9'
+   175 000000E7 7F1F                    jg _scanNumExit
+   176                                 
+   177                                 
+   178 000000E9 80EB30                  sub bl, '0'
+   179                                 
+   180                                 
+   181 000000EC A1[00000000]            mov eax, [_scanNumResult]
+   182 000000F1 BA00000000              mov edx, 0
+   183 000000F6 F725[00000000]          mul dword [_scanNumSepuluh]
+   184 000000FC 01D8                    add eax, ebx
+   185 000000FE A3[00000000]            mov dword [_scanNumResult], eax
+   186                                 
+   187                                 _scanNumNegativeNext:
+   188                                 
+   189                                 
+   190 00000103 E882FFFFFF              call _scanNumRead
+   191                                 
+   192 00000108 EBC8                    jmp _scanNumLoop
+   193                                 
+   194                                 
+   195                                 _scanNumExit:
+   196                                 
+   197                                 
+   198 0000010A A1[00000000]            mov eax, [_scanNumResult]
+   199 0000010F 99                      cdq
+   200 00000110 F72D[00000000]          imul dword[_scanNumNegative]
+   201                                 
+   202 00000116 C3                      ret
+   203                                 
+   204                                 
+   205                                 %line 7+1 main.asm
+   206                                 
+   207                                 [section .text]
+   208                                 [global main]
+   209                                 [global main]
+   210                                 
+   211                                 main:
+   212                                 
+   213                                 
+   214 00000117 B804000000              mov eax, 4
+   215 0000011C BB01000000              mov ebx, 1
+   216 00000121 B9[00000000]            mov ecx, msg_paket
+   217 00000126 BA4B000000              mov edx, len_msg_paket
+   218 0000012B CD80                    int 0x80
+   219 0000012D EBFE                    jmp input_paket
+   220                                 
+   221                                 
+   222                                 input_paket:
+   223 0000012F E86DFFFFFF              call scanNum
+   224 00000134 83F801                  cmp eax, 1
+   225 00000137 7421                    je tipesoal1
+   226 00000139 83F802                  cmp eax, 2
+   227 0000013C 0F840A020000            je tipesoal2
+   228 00000142 EBFE                    jmp paketsalah
+   229                                 
+   230                                 
+   231                                 
+   232                                 paketsalah:
+   233 00000144 B804000000              mov eax, 4
+   234 00000149 BB01000000              mov ebx, 1
+   235 0000014E B9[00000000]            mov ecx, msg_paketsalah
+   236 00000153 BA5C000000              mov edx, len_msg_paketsalah
+   237 00000158 CD80                    int 0x80
+   238 0000015A EBD1                    jmp input_paket
+   239                                 
+   240                                 tipesoal1:
+   241                                 
+   242 0000015C B805000000              mov eax, 5
+   243 00000161 BB[00000000]            mov ebx, sl1
+   244 00000166 B900000000              mov ecx, 0
+   245 0000016B BA09030000              mov edx, 777
+   246 00000170 CD80                    int 0x80
+   247 00000172 A3[00000000]            mov dword[isi_file], eax
+   248 00000177 B900000000              mov ecx, 0
+   249                                 
+   250                                 
+   251 0000017C B803000000              mov eax, 3
+   252 00000181 8B1D[00000000]          mov ebx, [isi_file]
+   253 00000187 B9[00000000]            mov ecx, soalan
+   254 0000018C BA10270000              mov edx, 10000
+   255 00000191 CD80                    int 0x80
+   256                                 
+   257                                 
+   258 00000193 B804000000              mov eax, 4
+   259 00000198 BB01000000              mov ebx, 1
+   260 0000019D B9[00000000]            mov ecx, soalan
+   261 000001A2 BA10270000              mov edx, 10000
+   262 000001A7 CD80                    int 0x80
+   263                                 
+   264                                 
+   265                                 
+   266                                 kalimat1:
+   267 000001A9 B804000000              mov eax, 4
+   268 000001AE BB01000000              mov ebx, 1
+   269 000001B3 B9[00000000]            mov ecx, msg2
+   270 000001B8 BA28000000              mov edx, len_msg2
+   271 000001BD CD80                    int 0x80
+   272                                 
+   273                                 loopjawaban:
+   274                                 
+   275 000001BF B803000000              mov eax, 3
+   276 000001C4 BB00000000              mov ebx, 0
+   277 000001C9 B9[00000000]            mov ecx, jawaban
+   278 000001CE BA02000000              mov edx, 2
+   279 000001D3 CD80                    int 0x80
+   280                                 
+   281 000001D5 803D[00000000]61        cmp byte[jawaban],'a'
+   282 000001DC 7532                    jne cek_b
+   283                                 balikan1:
+   284                                 
+   285 000001DE 8A01                    mov al, [ecx]
+   286 000001E0 41                      inc ecx
+   287                                 
+   288 000001E1 8B15[00000000]          mov edx, [total]
+   289 000001E7 3A0495[00000000]        cmp al, [kuncian1+4*edx]
+   290                                 
+   291 000001EE 7417                    je cek
+   292                                 
+   293                                 balikan2:
+   294 000001F0 8305[00000000]01        add dword[total], 1
+   295 000001F7 832D[00000000]01        sub dword[jumlah], 1
+   296 000001FE 833D[00000000]00        cmp dword [jumlah], 0
+   297 00000205 75B6                    jne loopjawaban
+   298 00000207 EB4E                    jmp cetakan
+   299                                 
+   300                                 cek:
+   301 00000209 8305[00000000]01        add dword[coba], 1
+   302 00000210 EBDC                    jmp balikan2
+   303                                 
+   304                                 cek_b:
+   305 00000212 803D[00000000]62        cmp byte[jawaban],'b'
+   306 00000219 7500                    jne cek_c
+   307 0000021B EBBF                    jmp balikan1
+   308                                 cek_c:
+   309 0000021D 803D[00000000]63        cmp byte[jawaban], 'c'
+   310 00000224 7500                    jne cek_d
+   311 00000226 EBB4                    jmp balikan1
+   312                                 cek_d:
+   313 00000228 803D[00000000]64        cmp byte[jawaban], 'd'
+   314 0000022F 7500                    jne cek_e
+   315 00000231 EBA9                    jmp balikan1
+   316                                 cek_e:
+   317 00000233 803D[00000000]65        cmp byte[jawaban], 'e'
+   318 0000023A 7500                    jne peringatan
+   319 0000023C EB9E                    jmp balikan1
+   320                                 peringatan:
+   321                                 
+   322 0000023E B804000000              mov eax, 4
+   323 00000243 BB01000000              mov ebx, 1
+   324 00000248 B9[00000000]            mov ecx, peringatan_msg
+   325 0000024D BA25000000              mov edx, 37
+   326 00000252 CD80                    int 0x80
+   327 00000254 E961FFFFFF              jmp loopjawaban
+   328                                 
+   329                                 
+   330                                 
+   331                                 cetakan:
+   332                                 
+   333 00000259 B804000000              mov eax, 4
+   334 0000025E BB01000000              mov ebx, 1
+   335 00000263 B9[00000000]            mov ecx, msg
+   336 00000268 BA16000000              mov edx, len_msg
+   337 0000026D CD80                    int 0x80
+   338                                 
+   339 0000026F A1[00000000]            mov eax, [coba]
+   340 00000274 E882FDFFFF              call printNum
+   341                                 
+   342                                 
+   343 00000279 B804000000              mov eax, 4
+   344 0000027E BB01000000              mov ebx, 1
+   345 00000283 B9[00000000]            mov ecx, newline
+   346 00000288 BA02000000              mov edx, 2
+   347 0000028D CD80                    int 0x80
+   348 0000028F B804000000              mov eax, 4
+   349 00000294 BB01000000              mov ebx, 1
+   350 00000299 B9[00000000]            mov ecx, kelas
+   351 0000029E BA13000000              mov edx, len_kelas
+   352 000002A3 CD80                    int 0x80
+   353 000002A5 EBFE                    jmp kelas_newbie
+   354                                 
+   355                                 kelas_newbie:
+   356 000002A7 833D[00000000]05        cmp dword[coba], 5
+   357 000002AE 7F19                    jg kelas_beginner
+   358 000002B0 B804000000              mov eax, 4
+   359 000002B5 BB01000000              mov ebx, 1
+   360 000002BA B9[00000000]            mov ecx, newbie
+   361 000002BF BA07000000              mov edx, len_newbie
+   362 000002C4 CD80                    int 0x80
+   363 000002C6 E969020000              jmp exit
+   364                                 
+   365                                 kelas_beginner:
+   366 000002CB 833D[00000000]08        cmp dword[coba], 8
+   367 000002D2 7F19                    jg kelas_intermediate
+   368 000002D4 B804000000              mov eax, 4
+   369 000002D9 BB01000000              mov ebx, 1
+   370 000002DE B9[00000000]            mov ecx, beginner
+   371 000002E3 BA09000000              mov edx, len_beginner
+   372 000002E8 CD80                    int 0x80
+   373 000002EA E945020000              jmp exit
+   374                                 
+   375                                 kelas_intermediate:
+   376 000002EF 833D[00000000]0A        cmp dword[coba], 10
+   377 000002F6 7F19                    jg kelas_expert
+   378 000002F8 B804000000              mov eax, 4
+   379 000002FD BB01000000              mov ebx, 1
+   380 00000302 B9[00000000]            mov ecx, intermediate
+   381 00000307 BA[00000000]            mov edx, len_intermediate
+   382 0000030C CD80                    int 0x80
+   383 0000030E E921020000              jmp exit
+   384                                 
+   385                                 kelas_expert:
+   386 00000313 833D[00000000]0C        cmp dword[coba], 12
+   387 0000031A 7F19                    jg kelas_insane
+   388 0000031C B804000000              mov eax, 4
+   389 00000321 BB01000000              mov ebx, 1
+   390 00000326 B9[00000000]            mov ecx, expert
+   391 0000032B BA07000000              mov edx, len_expert
+   392 00000330 CD80                    int 0x80
+   393 00000332 E9FD010000              jmp exit
+   394                                 
+   395                                 kelas_insane:
+   396 00000337 B804000000              mov eax, 4
+   397 0000033C BB01000000              mov ebx, 1
+   398 00000341 B9[00000000]            mov ecx, insane
+   399 00000346 BA07000000              mov edx, len_insane
+   400 0000034B CD80                    int 0x80
+   401 0000034D E9E2010000              jmp exit
+   402                                 
+   403                                 tipesoal2:
+   404                                 
+   405 00000352 B805000000              mov eax, 5
+   406 00000357 BB[00000000]            mov ebx, sl2
+   407 0000035C B900000000              mov ecx, 0
+   408 00000361 BA09030000              mov edx, 777
+   409 00000366 CD80                    int 0x80
+   410 00000368 A3[00000000]            mov dword[isi_file], eax
+   411 0000036D B900000000              mov ecx, 0
+   412                                 
+   413                                 
+   414 00000372 B803000000              mov eax, 3
+   415 00000377 8B1D[00000000]          mov ebx, [isi_file]
+   416 0000037D B9[00000000]            mov ecx, soalan
+   417 00000382 BA10270000              mov edx, 10000
+   418 00000387 CD80                    int 0x80
+   419                                 
+   420                                 
+   421 00000389 B804000000              mov eax, 4
+   422 0000038E BB01000000              mov ebx, 1
+   423 00000393 B9[00000000]            mov ecx, soalan
+   424 00000398 BA10270000              mov edx, 10000
+   425 0000039D CD80                    int 0x80
+   426                                 
+   427                                 
+   428                                 
+   429                                  kalimat12:
+   430 0000039F B804000000              mov eax, 4
+   431 000003A4 BB01000000              mov ebx, 1
+   432 000003A9 B9[00000000]            mov ecx, msg2
+   433 000003AE BA28000000              mov edx, len_msg2
+   434 000003B3 CD80                    int 0x80
+   435                                 
+   436                                 loopjawaban2:
+   437                                 
+   438 000003B5 B803000000              mov eax, 3
+   439 000003BA BB00000000              mov ebx, 0
+   440 000003BF B9[00000000]            mov ecx, jawaban
+   441 000003C4 BA02000000              mov edx, 2
+   442 000003C9 CD80                    int 0x80
+   443                                 
+   444 000003CB 803D[00000000]61        cmp byte[jawaban],'a'
+   445 000003D2 7532                    jne cek_b2
+   446                                 balikan12:
+   447                                 
+   448 000003D4 8A01                    mov al, [ecx]
+   449 000003D6 41                      inc ecx
+   450                                 
+   451 000003D7 8B15[00000000]          mov edx, [total]
+   452 000003DD 3A0495[00000000]        cmp al, [kuncian2+4*edx]
+   453                                 
+   454 000003E4 7417                    je cek2
+   455                                 
+   456                                 balikan22:
+   457 000003E6 8305[00000000]01        add dword[total], 1
+   458 000003ED 832D[00000000]01        sub dword[jumlah], 1
+   459 000003F4 833D[00000000]00        cmp dword [jumlah], 0
+   460 000003FB 75B6                    jne loopjawaban2
+   461 000003FD EB4E                    jmp cetakan2
+   462                                 
+   463                                 cek2:
+   464 000003FF 8305[00000000]01        add dword[coba], 1
+   465 00000406 EBDC                    jmp balikan22
+   466                                 
+   467                                 cek_b2:
+   468 00000408 803D[00000000]62        cmp byte[jawaban],'b'
+   469 0000040F 7500                    jne cek_c2
+   470 00000411 EBBF                    jmp balikan12
+   471                                 cek_c2:
+   472 00000413 803D[00000000]63        cmp byte[jawaban], 'c'
+   473 0000041A 7500                    jne cek_d2
+   474 0000041C EBB4                    jmp balikan12
+   475                                 cek_d2:
+   476 0000041E 803D[00000000]64        cmp byte[jawaban], 'd'
+   477 00000425 7500                    jne cek_e2
+   478 00000427 EBA9                    jmp balikan12
+   479                                 cek_e2:
+   480 00000429 803D[00000000]65        cmp byte[jawaban], 'e'
+   481 00000430 7500                    jne peringatan2
+   482 00000432 EB9E                    jmp balikan12
+   483                                 peringatan2:
+   484                                 
+   485 00000434 B804000000              mov eax, 4
+   486 00000439 BB01000000              mov ebx, 1
+   487 0000043E B9[00000000]            mov ecx, peringatan_msg
+   488 00000443 BA25000000              mov edx, 37
+   489 00000448 CD80                    int 0x80
+   490 0000044A E961FFFFFF              jmp loopjawaban2
+   491                                 
+   492                                 
+   493                                 
+   494                                 cetakan2:
+   495                                 
+   496 0000044F B804000000              mov eax, 4
+   497 00000454 BB01000000              mov ebx, 1
+   498 00000459 B9[00000000]            mov ecx, msg
+   499 0000045E BA16000000              mov edx, len_msg
+   500 00000463 CD80                    int 0x80
+   501                                 
+   502 00000465 A1[00000000]            mov eax, [coba]
+   503 0000046A E88CFBFFFF              call printNum
+   504                                 
+   505                                 
+   506 0000046F B804000000              mov eax, 4
+   507 00000474 BB01000000              mov ebx, 1
+   508 00000479 B9[00000000]            mov ecx, newline
+   509 0000047E BA02000000              mov edx, 2
+   510 00000483 CD80                    int 0x80
+   511 00000485 B804000000              mov eax, 4
+   512 0000048A BB01000000              mov ebx, 1
+   513 0000048F B9[00000000]            mov ecx, kelas
+   514 00000494 BA13000000              mov edx, len_kelas
+   515 00000499 CD80                    int 0x80
+   516 0000049B EBFE                    jmp kelas_newbie2
+   517                                 
+   518                                 kelas_newbie2:
+   519 0000049D 833D[00000000]05        cmp dword[coba], 5
+   520 000004A4 7F16                    jg kelas_beginner2
+   521 000004A6 B804000000              mov eax, 4
+   522 000004AB BB01000000              mov ebx, 1
+   523 000004B0 B9[00000000]            mov ecx, newbie
+   524 000004B5 BA07000000              mov edx, len_newbie
+   525 000004BA CD80                    int 0x80
+   526 000004BC EB79                    jmp exit
+   527                                 
+   528                                 kelas_beginner2:
+   529 000004BE 833D[00000000]08        cmp dword[coba], 8
+   530 000004C5 7F16                    jg kelas_intermediate2
+   531 000004C7 B804000000              mov eax, 4
+   532 000004CC BB01000000              mov ebx, 1
+   533 000004D1 B9[00000000]            mov ecx, beginner
+   534 000004D6 BA09000000              mov edx, len_beginner
+   535 000004DB CD80                    int 0x80
+   536 000004DD EB58                    jmp exit
+   537                                 
+   538                                 kelas_intermediate2:
+   539 000004DF 833D[00000000]0A        cmp dword[coba], 10
+   540 000004E6 7F16                    jg kelas_expert2
+   541 000004E8 B804000000              mov eax, 4
+   542 000004ED BB01000000              mov ebx, 1
+   543 000004F2 B9[00000000]            mov ecx, intermediate
+   544 000004F7 BA[00000000]            mov edx, len_intermediate
+   545 000004FC CD80                    int 0x80
+   546 000004FE EB37                    jmp exit
+   547                                 
+   548                                 kelas_expert2:
+   549 00000500 833D[00000000]0C        cmp dword[coba], 12
+   550 00000507 7F16                    jg kelas_insane2
+   551 00000509 B804000000              mov eax, 4
+   552 0000050E BB01000000              mov ebx, 1
+   553 00000513 B9[00000000]            mov ecx, expert
+   554 00000518 BA07000000              mov edx, len_expert
+   555 0000051D CD80                    int 0x80
+   556 0000051F EB16                    jmp exit
+   557                                 
+   558                                 kelas_insane2:
+   559 00000521 B804000000              mov eax, 4
+   560 00000526 BB01000000              mov ebx, 1
+   561 0000052B B9[00000000]            mov ecx, insane
+   562 00000530 BA07000000              mov edx, len_insane
+   563 00000535 CD80                    int 0x80
+   564 00000537 EBFE                    jmp exit
+   565                                 
+   566                                 
+   567                                 
+   568                                 exit:
+   569 00000539 B801000000              mov eax, 1
+   570 0000053E BB00000000              mov ebx, 0
+   571 00000543 CD80                    int 0x80
+   572                                 
+   573                                 [section .data]
+   574 0000000C 620000006100000063-     kuncian1 dd 'b','a','c','d','a','a','d','b','c','a','d','d','b','a','a',0
+   575 0000000C 000000640000006100-
+   576 0000000C 000061000000640000-
+   577 0000000C 006200000063000000-
+   578 0000000C 610000006400000064-
+   579 0000000C 000000620000006100-
+   580 0000000C 000061000000000000-
+   581 0000000C 00                 
+   582 0000004C 610000006100000061-     kuncian2 dd 'a','a','a','b','b','b','c','c','c','d','d','d','e','e','e',0
+   583 0000004C 000000620000006200-
+   584 0000004C 000062000000630000-
+   585 0000004C 006300000063000000-
+   586 0000004C 640000006400000064-
+   587 0000004C 000000650000006500-
+   588 0000004C 000065000000000000-
+   589 0000004C 00                 
+   590 0000008C 73696C616B616E206D-     peringatan_msg db "silakan masukan jawaban dengan benar",0xa
+   591 0000008C 6173756B616E206A61-
+   592 0000008C 776162616E2064656E-
+   593 0000008C 67616E2062656E6172-
+   594 0000008C 0A                 
+   595 000000B1 50616B65742079616E-     msg_paket db "Paket yang tersedia:",0xa,"1. Paket Soal 1",0xa,"2. Paket Soal 2",0xa,"Silahkan pilih paket: "
+   596 000000B1 672074657273656469-
+   597 000000B1 613A0A312E2050616B-
+   598 000000B1 657420536F616C2031-
+   599 000000B1 0A322E2050616B6574-
+   600 000000B1 20536F616C20320A53-
+   601 000000B1 696C61686B616E2070-
+   602 000000B1 696C69682070616B65-
+   603 000000B1 743A20             
+   604                                  len_msg_paket equ $-msg_paket
+   605 000000FC 0A4D6161662070616B-     msg_paketsalah db 0xa,"Maaf paket tidak tersedia, silahkan input paket kembali secara benar",0xa,"Silahkan pilih paket: "
+   606 000000FC 657420746964616B20-
+   607 000000FC 74657273656469612C-
+   608 000000FC 2073696C61686B616E-
+   609 000000FC 20696E707574207061-
+   610 000000FC 6B6574206B656D6261-
+   611 000000FC 6C6920736563617261-
+   612 000000FC 2062656E61720A5369-
+   613 000000FC 6C61686B616E207069-
+   614 000000FC 6C69682070616B6574-
+   615 000000FC 3A20               
+   616                                  len_msg_paketsalah equ $-msg_paketsalah
+   617 00000158 536B6F722045505420-     msg db "Skor EPT kamu adalah: "
+   618 00000158 6B616D75206164616C-
+   619 00000158 61683A20           
+   620                                  len_msg equ $-msg
+   621 0000016E 53696C61686B616E20-     msg2 db "Silahkan masukkan jawaban kamu (1-15): ",0xa
+   622 0000016E 6D6173756B6B616E20-
+   623 0000016E 6A61776162616E206B-
+   624 0000016E 616D752028312D3135-
+   625 0000016E 293A200A           
+   626                                  len_msg2 equ $-msg2
+   627 00000196 4B616D75206D617375-     kelas db "Kamu masuk kelas : "
+   628 00000196 6B206B656C6173203A-
+   629 00000196 20                 
+   630                                  len_kelas equ $-kelas
+   631 000001A9 4E65776269650A          newbie db "Newbie",0xa
+   632                                  len_newbie equ $-newbie
+   633 000001B0 426567696E6E65720A      beginner db "Beginner",0xa
+   634                                  len_beginner equ $-beginner
+   635 000001B9 496E7465726D656469-     intermediate db "Intermediate",0xa
+   636 000001B9 6174650A           
+   637 000001C6 0D                      len_intermediate db $-intermediate
+   638 000001C7 4578706572740A          expert db "Expert",0xa
+   639                                  len_expert equ $-expert
+   640 000001CE 496E73616E650A          insane db "Insane",0xa
+   641                                  len_insane equ $-insane
+   642 000001D5 736F616C312E747874-     sl1 db "soal1.txt",0
+   643 000001D5 00                 
+   644 000001DF 736F616C322E747874-     sl2 db "soal2.txt",0
+   645 000001DF 00                 
+   646 000001E9 00000000                coba dd 0
+   647 000001ED 0F000000                jumlah dd 15
+   648 000001F1 00000000                total dd 0
+   649 000001F5 0A                      newline db 10
+   650                                 
+   651                                 [section .bss]
+   652 00000108 <gap>                   soalan resd 10000
+   653 00009D48 <gap>                   jawaban resb 255
+   654 00009E47 <gap>                   isi_file resd 1
+   655 00009E4B <gap>                   Score resb 3
+   656                                 
+   657                                 
+   658                                 
+   659                                 
+   660                                 
